@@ -1,7 +1,7 @@
 const express = require("express");
 const uuidv4 = require("uuidv4");
 const api = express.Router();
-const housesDB = require("../houses-data.json");
+const housesDB = require("./houses-data.json");
 
 function hasAllProperties(obj, props) {
   for (let i = 0; i < props.length; i++) {
