@@ -1,11 +1,13 @@
 const express = require("express");
+const apiRouter = require("./apiRouters");
+const bodyParser = require("body-parser");
 const app = express();
 
-// import api from "./apiRouters";
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
-  res.send("i'm working");
-});
-
-const myPort = 3000;
-app.listen(3000, `listening to port ${myPort}`);
+app.use("/api", apiRouter);
+// app.use("*", (req, res) => {
+//   res.send("");
+// });
+module.exports = app;
