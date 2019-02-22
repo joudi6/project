@@ -10,6 +10,9 @@ function hasAllProperties(obj, props) {
     return true;
   }
 }
+api.route("/", (req, res) => {
+  res.end("api home");
+});
 api
   .route("/houses")
   .get((req, res) => {
