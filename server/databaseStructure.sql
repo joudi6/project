@@ -1,0 +1,13 @@
+
+DROP TABLE IF EXISTS houses;
+CREATE TABLE
+-- IF NOT EXISTS
+ houses
+(
+  id INT
+  AUTO_INCREMENT PRIMARY KEY,
+  owner VARCHAR
+  (255) NOT NULL ,
+  price FLOAT NOT NULL,
+  rooms INT NOT NULL
+);
