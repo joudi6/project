@@ -5,18 +5,14 @@ let connection = mysql.createConnection({
   database: "project"
 });
 const { promisify } = require("util");
-const executeQuery = promisify(connection.query);
 
-// let data = [`elia`, 7000, 5];
-// let houseInsertion = connection.query(
-//   `insert into houses (owner, price,rooms) values(?)`,
-//   [data]
-// );
-// async () => {
-//   try {
-//     await executeQuery(houseInsertion);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
-module.exports = { connection, executeQuery };
+// connection.executeQuery = promisify(connection.query);
+// const executeQuery = promisify(connection.bind(connection));
+
+// connection.executeQuery = promisify(connection.query);
+const queryPromise = promisify(connection.query.bind(connection));
+
+module.exports = {
+  connection,
+  queryPromise
+};

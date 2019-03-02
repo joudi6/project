@@ -1,17 +1,10 @@
 const express = require("express");
-const uuidv4 = require("uuidv4");
-const db = require("./houses-data.json");
-let database = require("./dbConnection");
+const housesDB = require("./houses-data.json");
+let { queryPromise, connection } = require("./dbConnection");
+let { validator, newHousesValues } = require("./validation");
 
 const api = express.Router();
 
-function hasAllProperties(obj, props) {
-  for (let i = 0; i < props.length; i++) {
-    if (!obj.hasOwnProperty(props[i])) return false;
-
-    return true;
-  }
-}
 api.route("/", (req, res) => {
   res.end("api home");
 });
@@ -20,38 +13,49 @@ api
   .get((req, res) => {
     housesDB.length > 0 ? res.json(housesDB) : res.send("empty database");
   })
-  .post((req, res) => {
-    let newHouse = [`elia`, 7000, 5];
-    if (
-      newHouse.constructor === Array
-      // &&Object.entries(newHouse).length > 0
-    ) {
-      if (hasAllProperties(newHouse, ["owner", "rooms", "price"]) === true) {
-        let { price } = req.body;
-        let range = /^[0-9]+$/;
-        if (range.test(price) && price > 0) {
-          newHouse.id = uuidv4();
-          housesDB.push(newHouse);
-          res.json(newHouse);
-        }
+  .post(async (req, res) => {
+    const processedHouses = req.body.map(house => {
+      return validator(house);
+    });
+
+    const validData = [];
+    const invalidData = [];
+
+    processedHouses.forEach(elem => {
+      if (elem.valid) {
+        validData.push(elem);
+      } else {
+        invalidData.push(elem);
       }
-      res.status(400).end("missing or invalid house details");
+    });
+    const report = {
+      valid: validData.length,
+      invalid: invalidData
+    };
+    if (validData.length) {
+      // console.log("validData: ", validData);
+      // console.log("report: ", report);
+      let query = `insert into houses(owner,price,rooms) values(?,?,?) `;
+      const houseDataValues = validData.map(house => {
+        return Object.values(house.raw);
+      });
+      console.log("houseDataValues", houseDataValues);
+      try {
+        for (let i = 0; i < houseDataValues.length; i++) {
+          connection.query(query, houseDataValues[i]);
+          // await queryPromise(query, houseDataValues[i]);
+        }
+
+        return res.json(report);
+      } catch (err) {
+        return res.status(500).json({ err: err.message });
+      }
     }
-    res.status(400).end("Empty or invalid dataType");
+    res.json(report);
+    // }
+    // res.status(400).json({ error: "data shoud be an array" });
+    // console.log("report:", report);
   });
-
-database.connect();
-let query = `insert into houses (owner, price,rooms) values(?)`;
-
-let houseInsertion = connection.query(query, [newHouse]);
-async () => {
-  try {
-    await executeQuery(houseInsertion);
-  } catch (err) {
-    console.log(err);
-  }
-};
-database.end();
 
 api
   .route("/houses/:id")
