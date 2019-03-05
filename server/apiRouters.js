@@ -2,58 +2,88 @@ const express = require("express");
 const uuidv4 = require("uuidv4");
 const api = express.Router();
 const housesDB = require("./houses-data.json");
+const { validator } = require("./validator");
+const { queryPromise } = require("./dbConnection");
 
-function hasAllProperties(obj, props) {
-  for (let i = 0; i < props.length; i++) {
-    if (!obj.hasOwnProperty(props[i])) return false;
+const getHouses = (req, res) => {
+  housesDB.length > 0 ? res.json(housesDB) : res.send("empty database");
+};
 
-    return true;
+const postHouses = async (req, res) => {
+  let newHouses = req.body;
+  if (!Array.isArray(newHouses) || newHouses.length === 0) {
+    res.status(400).json({
+      error:
+        "Empty or invalid dataType, Please Enter your data as array of objects"
+    });
+  } else {
+    newHouses.map(house => {
+      if (typeof house !== "object" || !Object.entries(house).length > 0) {
+        res
+          .status(400)
+          .json(
+            "Empty or invalid dataType please enter each house as a json object"
+          );
+      } else {
+        res.json("newHouses");
+        // if (hasAllProperties(newHouse, ["owner", "rooms", "price"]) === true) {
+        //   let { price } = req.body;
+        //   let range = /^[0-9]+$/;
+        //   if (range.test(price) && price > 0) {
+        //     newHouse.id = uuidv4();
+        //     housesDB.push(newHouse);
+        //     res.json(newHouse);
+        //   }
+        // res.status(400).end("missing or invalid house details");
+        try {
+          queryPromise(`replace into houses ( link,
+  market_date,
+  location_country,
+  location_city,
+  location_address,
+  location_coordinates_lat,
+  location_coordinates_lng,
+  size_living_area,
+  size_rooms,
+  price_value,
+  price_currency,
+  description,
+  title,
+  images,
+  sold )values ?`);
+        } catch (error) {}
+      }
+    });
   }
-}
+  // }
+};
+const getHouseDetails = (req, res) => {
+  const { id } = req.params;
+  let house = housesDB.find(house => {
+    return house.id === parseInt(id, 10);
+  });
+  house ? res.json(house) : res.send("no houses with this id");
+};
+const deleteHouse = (req, res) => {
+  const { id } = req.params;
+  let newHousesDB = housesDB.filter(house => {
+    return house.id !== parseInt(id, 10);
+  });
+  res.json(newHousesDB);
+};
+
 api.route("/", (req, res) => {
   res.end("api home");
 });
 api
   .route("/houses")
-  .get((req, res) => {
-    housesDB.length > 0 ? res.json(housesDB) : res.send("empty database");
-  })
-  .post((req, res) => {
-    let newHouse = req.body;
-    if (
-      newHouse.constructor === Object &&
-      Object.entries(newHouse).length > 0
-    ) {
-      if (hasAllProperties(newHouse, ["owner", "rooms", "price"]) === true) {
-        let { price } = req.body;
-        let range = /^[0-9]+$/;
-        if (range.test(price) && price > 0) {
-          newHouse.id = uuidv4();
-          housesDB.push(newHouse);
-          res.json(newHouse);
-        }
-      }
-      res.status(400).end("missing or invalid house details");
-    }
-    res.status(400).end("Empty or invalid dataType");
-  });
+  .get(getHouses)
+  .post(postHouses);
 
 api
   .route("/houses/:id")
-  .get((req, res) => {
-    const { id } = req.params;
-    let house = housesDB.find(house => {
-      return house.id === parseInt(id, 10);
-    });
-    house ? res.json(house) : res.send("no houses with this id");
-  })
-  .delete((req, res) => {
-    const { id } = req.params;
-    let newHousesDB = housesDB.filter(house => {
-      return house.id !== parseInt(id, 10);
-    });
-    res.json(newHousesDB);
-  });
+  .get(getHouseDetails)
+  .delete(deleteHouse);
 
 api.use((req, res) => {
   res.status(400).end("unsupported request");
