@@ -5,10 +5,10 @@ const connection = mysql.createConnection({
   password: "hyfpassword",
   database: "project"
 });
-
 const queryPromise = util.promisify(connection.query.bind(connection));
-console.log("connected");
+console.log("db connected successfully");
 
 module.exports = {
-  queryPromise
+  queryPromise,
+  connection
 };

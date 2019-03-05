@@ -7,7 +7,7 @@ CREATE TABLE `houses`
   `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `link` VARCHAR(255) NOT NULL UNIQUE KEY,
   `market_date`DATETIME  NOT NULL,
-  `Location_country` VARCHAR(200) NOT NULL,
+  `location_country` VARCHAR(200) NOT NULL,
   `location_city` VARCHAR(200)NOT NULL,
   `location_address` VARCHAR(200)NOT NULL,
   `location_coordinates_lat` FLOAT(10,6) NOT NULL,
