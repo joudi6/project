@@ -36,7 +36,24 @@ class Contribute extends React.Component {
           <input type="submit" value="submit" onClick={this.onSubmit} />
         </form>
         {errors && <div>Error: {errors}</div>}
-        {report && <div>report: {report}</div>}
+        {report && (
+          <div>
+            report:
+            <div>valid houses: {report.valid}</div>
+            <div>
+              invalid houses raw:
+              {report.invalid.length}:
+              {report.invalid.map(house => (
+                <div>
+                  invalid house:
+                  <pre>{JSON.stringify(house.raw, null, 2)}</pre>
+                  errors
+                  <pre>{JSON.stringify(house.errors, null, 2)}</pre>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     );
   }
