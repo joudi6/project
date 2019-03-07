@@ -4,8 +4,13 @@ const housesDB = require("./houses-data.json");
 const { validator, allProperties } = require("./validator");
 const { queryPromise } = require("./dbConnection");
 
-const getHouses = (req, res) => {
-  housesDB.length > 0 ? res.json(housesDB) : res.send("empty database");
+const getHouses = async (req, res) => {
+  try {
+    const housesList = await queryPromise(`select * from houses`);
+    housesList ? res.json(housesList) : res.json("empty database");
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };
 
 const postHouses = async (req, res) => {

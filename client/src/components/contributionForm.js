@@ -21,6 +21,7 @@ class Contribute extends React.Component {
         this.setState({ errors: error.message });
       });
   };
+
   render() {
     const { errors, report } = this.state;
     return (
