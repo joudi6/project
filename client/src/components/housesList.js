@@ -29,7 +29,7 @@ class HouseList extends React.Component {
         this.setState({ error: "fetching data failed", loading: false });
       });
   }
-
+  fetchHouses = () => {};
   HandleValueChange = e => {
     const { name, value } = e.target;
     this.setState(
@@ -123,7 +123,12 @@ class HouseList extends React.Component {
         {houses.map(house => (
           <div key={house.id}>
             house {house.id} :
-            <Link to={`/houses/${house.link}`}> {house.price_value}</Link>
+            <Link to={`/houses/${house.link}`}>
+              <p> {house.price_value}</p>
+              <p> {house.location_country}</p>
+              <p> {house.market_date}</p>
+              <p> {house.size_living_area}</p>
+            </Link>
           </div>
         ))}
       </div>

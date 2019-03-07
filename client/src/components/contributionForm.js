@@ -6,6 +6,7 @@ class Contribute extends React.Component {
   };
   onSubmit = e => {
     e.preventDefault();
+
     fetch(`http://localhost:4000/api/houses`, {
       method: "POST",
       body: this.HouseInput.value,
