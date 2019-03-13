@@ -12,7 +12,7 @@ class HouseDetails extends React.Component {
       .then(res => res.json())
       .then(house => {
         this.setState({
-          house,
+          house: house[0],
           loading: false
         });
       })
@@ -21,17 +21,18 @@ class HouseDetails extends React.Component {
       });
   }
   render() {
-    const { owner, rooms, price } = this.state.house;
     const { error, house, loading } = this.state;
     if (loading) return <p>Loading...</p>;
     if (error) return <p>ERROR: {error}</p>;
+
     if (house) {
       return (
         <div>
-          <p>owner: {owner}</p>
-          <p>rooms: {rooms}</p>
-          <p>price: {price}</p>
-          <br />
+          <p> house N.{house.id}</p>
+          <p> price:{house.price_value}</p>
+          <p> country: {house.location_country}</p>
+          <p> date:{house.market_date}</p>
+          <p> size-area:{house.size_living_area}</p>
         </div>
       );
     }

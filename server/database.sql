@@ -21,20 +21,20 @@ CREATE TABLE `houses`
   `images` VARCHAR(255) DEFAULT '',
   `sold` INT DEFAULT '0')
 
-[{
-"link":"<https://www.google.nl/>",
- "market_date":"",
-  "location_country" :"Netherlands",
-  "location_city":"Amsterdam",
-  "location_address":"wesperplain",
-  "location_coordinates_lat"  :0.465,
-  "location_coordinates_lng" :0.677,
-  "size_living_area": 25,
-  "size_rooms"  :3,
-  "price_value"  :2500.478,
-  "price_currency":"EUR",
-  "description" :"ghvjk",
-  "title"  :"opiu",
-  "images":"<https://www.google.nl/>,<https://www.google.nl/>",
-  "sold":0
-}]
+-- [{
+-- "link":"<https://www.google.nl/>",
+--  "market_date":"",
+--   "location_country" :"Netherlands",
+--   "location_city":"Amsterdam",
+--   "location_address":"wesperplain",
+--   "location_coordinates_lat"  :0.465,
+--   "location_coordinates_lng" :0.677,
+--   "size_living_area": 25,
+--   "size_rooms"  :3,
+--   "price_value"  :2500.478,
+--   "price_currency":"EUR",
+--   "description" :"ghvjk",
+--   "title"  :"opiu",
+--   "images":"<https://www.google.nl/>,<https://www.google.nl/>",
+--   "sold":0
+-- }]

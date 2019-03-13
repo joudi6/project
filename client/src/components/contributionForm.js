@@ -25,6 +25,7 @@ class Contribute extends React.Component {
 
   render() {
     const { errors, report } = this.state;
+    console.log("report: ", report);
     return (
       <div>
         <form>
@@ -44,12 +45,12 @@ class Contribute extends React.Component {
             <div>valid houses: {report.valid}</div>
             <div>
               invalid houses raw:
-              {report.invalid.length}:
+              {report.invalid.length}
               {report.invalid.map(house => (
                 <div>
                   invalid house:
                   <pre>{JSON.stringify(house.raw, null, 2)}</pre>
-                  errors
+                  errors:
                   <pre>{JSON.stringify(house.errors, null, 2)}</pre>
                 </div>
               ))}

@@ -129,31 +129,33 @@ function validator(newHouse) {
               errors.push(`${key} must be three letters of existence currency`);
           }
           break;
-        case "images": {
-          let imagesArray = newHouse[key].split(",");
-          imagesArray.map(imageURL => {
-            !validLink.test(imageURL) &&
-              errors.push(
-                `${key} must be list of urls to images, separated with comma`
-              );
-          });
-        }
+        case "images":
+          {
+            let imagesArray = newHouse[key].split(",");
+            imagesArray.map(imageURL => {
+              !validLink.test(imageURL) &&
+                errors.push(
+                  `${key} must be list of urls to images, separated with comma`
+                );
+            });
+          }
+          break;
         case "sold":
           {
             if (
               typeof newHouse[key] !== "number" ||
-              (newHouse[key] !== 0 || newHouse[key] !== 0)
+              (newHouse[key] !== 0 && newHouse[key] !== 1)
             )
               errors.push(`${key} must be 0 or 1`);
           }
           break;
-        default:
-          valid = true;
       }
     });
 
   if (!errors.length) valid = true;
 
+  console.log("errors: ", errors);
+  console.log("valid: ", valid);
   return {
     valid,
     errors,
