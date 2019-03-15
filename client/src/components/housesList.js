@@ -10,7 +10,6 @@ class HouseList extends React.Component {
     error: null,
     total: 0,
     perPage: 0,
-    activePage: 0,
     searchCriteria: {
       price_min: "0",
       price_max: "30000",
@@ -21,6 +20,26 @@ class HouseList extends React.Component {
   };
 
   componentDidMount() {
+    const { search } = this.props.location;
+    const searchParams = {};
+
+    if (search !== "") {
+      search
+        .slice(1)
+        .split("&")
+        .map(searchParam => searchParam.split("="))
+        .forEach(([key, value]) => {
+          searchParams[key] = value;
+        });
+    }
+
+    this.setState(
+      { searchCriteria: { ...this.state.searchCriteria, ...searchParams } },
+      this.fetchHouses
+    );
+  }
+
+  fetchHouses() {
     const { searchCriteria } = this.state;
     const queryString = Object.keys(searchCriteria)
       .reduce((query, field) => {
@@ -31,9 +50,7 @@ class HouseList extends React.Component {
         return query;
       }, [])
       .join("&");
-    this.props.history.replace(
-      this.props.location.pathname + "?" + queryString
-    );
+
     return fetch(`http://localhost:4000/api/houses?${queryString}`)
       .then(res => res.json())
       .then(({ houses, perPage, total }) => {
@@ -95,10 +112,15 @@ class HouseList extends React.Component {
       }
     });
   };
-  handlePageChange(pageNumber) {
+
+  handlePageChange = pageNumber => {
     console.log(`active page is ${pageNumber}`);
-    this.setState({ activePage: pageNumber });
-  }
+    this.setState(
+      { searchCriteria: { ...this.state.searchCriteria, page: pageNumber } },
+      this.fetchHouses
+    );
+  };
+
   render() {
     const {
       houses,
@@ -106,7 +128,7 @@ class HouseList extends React.Component {
       total,
       perPage,
       loading,
-      searchCriteria: { price_min, price_max, sort, country, page }
+      searchCriteria: { price_min, price_max, sort, location_country, page }
     } = this.state;
     return (
       <div>
@@ -116,7 +138,7 @@ class HouseList extends React.Component {
               <label>country: </label>
               <select
                 name="location_country"
-                value={country}
+                value={location_country}
                 onChange={this.HandleValueChange}
               >
                 <option value="select country">select country</option>
@@ -145,10 +167,11 @@ class HouseList extends React.Component {
                 value={price_max}
                 onChange={this.HandleValueChange}
               >
-                <option value="40000">40000</option>
-                <option value="50000">50000</option>
-                <option value="60000">60000</option>
-                <option value="70000">70000</option>
+                {[4000, 5000, 60000, 70000, 1000000].map(price => (
+                  <option key={price} value={price}>
+                    {price}
+                  </option>
+                ))}
               </select>
             </div>
             <div>
@@ -187,7 +210,7 @@ class HouseList extends React.Component {
         )}
         <div>
           <Pagination
-            activePage={this.state.activePage}
+            activePage={this.state.searchCriteria.page}
             itemsCountPerPage={perPage}
             totalItemsCount={total}
             pageRangeDisplayed={5}

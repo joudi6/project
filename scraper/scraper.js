@@ -8,14 +8,13 @@ const housesArray = [];
   await page.goto("https://www.huislijn.nl/koopwoning/nederland/Utrecht");
   const listElements = await page.evaluate(() =>
     Array.from(
-      document.querySelectorAll("div.objects-row div.wrapper-objects a[href]")
-    ).map(elem => elem.textContent)
+      document.querySelectorAll("div.objects-row div.wrapper-objects")
+    ).map(elem => Array.from(elem.querySelectorAll("h1")))
   );
 
   console.log("result", listElements);
-  // console.log("housesArray: ", housesArray);
 
-  fs.writeFile(
+  fs.appendFile(
     "scrapedData.json",
     JSON.stringify(listElements, null, 2),
     function(err) {
