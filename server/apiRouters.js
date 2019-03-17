@@ -1,8 +1,8 @@
 const express = require("express");
 const api = express.Router();
 const housesDB = require("./houses-data.json");
-const { validator, allProperties } = require("./validator");
-const { queryPromise, connection } = require("./dbConnection");
+const { validator } = require("./validator");
+const { queryPromise } = require("./dbConnection");
 
 const getHouses = async (req, res) => {
   let {

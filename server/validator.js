@@ -1,20 +1,3 @@
-const allProperties = [
-  "link",
-  "market_date",
-  "location_country",
-  "location_city",
-  "location_address",
-  "location_coordinates_lat",
-  "location_coordinates_lng",
-  "size_living_area",
-  "size_rooms",
-  "price_value",
-  "price_currency",
-  "description",
-  "title",
-  "images",
-  "sold"
-];
 const requiredProperties = [
   "link",
   "market_date",
@@ -78,8 +61,10 @@ function validator(newHouse) {
         break;
       case "market_date":
         {
-          const rightNow = new Date();
-          newHouse[key] = rightNow.toISOString().slice(0, 10);
+          const now = new Date().toISOString();
+          if (value > now) {
+            errors.push(`${key} must be valid date in the past`);
+          }
         }
         break;
       case "location_country":
@@ -147,4 +132,4 @@ function validator(newHouse) {
   };
 }
 
-module.exports = { validator, allProperties };
+module.exports = { validator };
