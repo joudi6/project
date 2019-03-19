@@ -1,6 +1,5 @@
 const requiredProperties = [
   "link",
-  "market_date",
   "location_country",
   "location_city",
   "size_living_area",
@@ -42,7 +41,11 @@ function validator(newHouse) {
       errors.push(`invalid data. each house must be valid json object`);
     }
   }
-
+  function checkDate(house) {
+    if (!newHouse.hasOwnProperty("market_date")) {
+      house["market_date"] = new Date().toISOString().slice(0, 10);
+    }
+  }
   checkObject(newHouse);
   if (errors.length > 0) {
     return {
@@ -54,6 +57,7 @@ function validator(newHouse) {
 
   checkRequiredProps(newHouse, requiredProperties);
   checkLocation(newHouse);
+  checkDate(newHouse);
   Object.entries(newHouse).forEach(([key, value]) => {
     switch (key) {
       case "link":
@@ -61,8 +65,13 @@ function validator(newHouse) {
         break;
       case "market_date":
         {
-          const now = new Date().toISOString();
-          if (value > now) {
+          const now = new Date().toISOString().slice(0, 10);
+          const year = now.getYear();
+          const month = now.getMonth();
+          const day = now.getDay();
+          let today = `${year}-${month}-${day}`;
+          let validDate = /^ (19 | 20) \d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/;
+          if (value > today) {
             errors.push(`${key} must be valid date in the past`);
           }
         }
@@ -123,8 +132,6 @@ function validator(newHouse) {
 
   if (!errors.length) valid = true;
 
-  console.log("errors: ", errors);
-  console.log("valid: ", valid);
   return {
     valid,
     errors,
@@ -133,3 +140,13 @@ function validator(newHouse) {
 }
 
 module.exports = { validator };
+
+// function isDate(dateAndTime) {
+//   const D = new Date(Date.parse(dateAndTime));
+//   const date = [D.getFullYear(), D.getMonth(), D.getDate()];
+//   let month = date[1] < 10 ? "0" + date[1] : date[1];
+//   let day = date[2] < 10 ? "0" + date[2] : date[2];
+//   return isNaN(day)
+//     ? new Date().toISOString().slice(0, 10)
+//     : `${date[0]}-${month}-${day}`;
+// }

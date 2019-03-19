@@ -25,7 +25,6 @@ class Contribute extends React.Component {
 
   render() {
     const { errors, report } = this.state;
-    console.log("report: ", report);
     return (
       <div>
         <form>

@@ -122,6 +122,8 @@ const postHouses = async (req, res) => {
       } catch (error) {
         return res.status(500).json({ error: error.message });
       }
+    } else {
+      return res.json(report);
     }
   }
 };

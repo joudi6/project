@@ -13,7 +13,7 @@ const fs = require("fs");
     const cityLink = `https://www.huislijn.nl/koopwoning/nederland?page=${i}`;
     await page.goto(cityLink);
 
-    let houseData = await page.evaluate(() => {
+    let housesData = await page.evaluate(() => {
       let houses = [];
       let housesElms = document.querySelectorAll("div.wrapper-objects a");
 
@@ -24,7 +24,7 @@ const fs = require("fs");
           let elemLink = houseElement.getAttribute("href");
           let linkArr = elemLink.split("/");
           if (elemLink) {
-            houseObj.link = elemLink;
+            houseObj.link = `https://www.huislijn.nl/koopwoning/nederland${elemLink}`;
             houseObj.market_date = new Date().toISOString().slice(0, 10);
             houseObj.location_country = linkArr[2];
             houseObj.location_city = linkArr[3]
@@ -37,17 +37,21 @@ const fs = require("fs");
               .trim();
             houseObj.location_coordinates_lat = 0;
             houseObj.location_coordinates_lng = 0;
-            houseObj.size_living_area = houseElement
-              .querySelector("div.object-type")
-              .innerText.split(",")[1]
-              .split("/")[0]
-              .replace("m2", "")
-              .trim();
-            houseObj.size_rooms = houseElement
-              .querySelector("div.object-type")
-              .innerText.split(",")[2]
-              .slice(1, 2)
-              .trim();
+            houseObj.size_living_area = parseFloat(
+              houseElement
+                .querySelector("div.object-type")
+                .innerText.split(",")[1]
+                .split("/")[0]
+                .replace("m2", "")
+                .trim()
+            );
+            houseObj.size_rooms = parseInt(
+              houseElement
+                .querySelector("div.object-type")
+                .innerText.split(",")[2]
+                .slice(1, 2)
+                .trim()
+            );
             houseObj.price_value = parseFloat(
               houseElement
                 .querySelector("div.object-type")
@@ -69,15 +73,14 @@ const fs = require("fs");
       });
       return houses;
     });
-
     fs.appendFile(
       "scrapedData.json",
-      JSON.stringify(houseData, null, 2),
+      JSON.stringify(housesData, null, 2),
       function(err) {
         if (err) throw err;
       }
     );
-    console.log(houseData.length);
+    console.log(housesData.length);
   }
   await browser.close();
 })();
